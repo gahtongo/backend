@@ -5,6 +5,7 @@ pydantic
 pydantic-settings
 python-jose[cryptography]
 passlib[bcrypt]
+argon2-cffi
 email-validator
 python-multipart
 psycopg2-binary
