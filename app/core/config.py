@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     APP_NAME: str = "GAHTO Backend"
     APP_VERSION: str = "1.0.0"
-    DEBUG: bool = True
+    DEBUG: bool = False
 
     API_V1_PREFIX: str = "/api/v1"
 
@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24
 
-    #DATABASE_URL: str = "sqlite:///./gahto.db"
+    DATABASE_URL: str = "sqlite:///./gahto.db"
 
     BACKEND_CORS_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000,https://gahto.org,https://www.gahto.org,https://ghatosite.vercel.app"
 
