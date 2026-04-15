@@ -3,7 +3,9 @@ from sqlalchemy.orm import Session
 from app.models.report import Report
 from app.schemas.notification import NotificationCreate
 from app.schemas.report import ReportCreate, ReportUpdateAdmin
+
 from app.services.notification_service import create_notification
+from app.services.ai_triage_service import generate_support_reply, AIChatRequest, AIChatMessage
 
 
 VALID_REPORT_STATUSES = {"new", "in_review", "resolved", "archived"}
@@ -40,9 +42,24 @@ def create_report(db: Session, payload: ReportCreate) -> Report:
         escalation_status="pending",
     )
 
+
     db.add(report)
     db.commit()
     db.refresh(report)
+
+    # --- AI triage automation ---
+    try:
+        ai_request = AIChatRequest(messages=[AIChatMessage(role="user", content=report.description)])
+        ai_response = generate_support_reply(ai_request)
+        # Map risk_level to a numeric severity score
+        risk_map = {"high": 90, "elevated": 60, "normal": 20}
+        report.ai_severity_score = risk_map.get(ai_response.risk_level, 20)
+        report.ai_summary = ai_response.reply
+        db.commit()
+        db.refresh(report)
+    except Exception as e:
+        # Log or ignore AI errors, but don't block report creation
+        pass
 
     preview = report.description.strip()
     if len(preview) > 140:
