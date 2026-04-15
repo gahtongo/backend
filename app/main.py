@@ -32,6 +32,10 @@ from app.api.routes import donations
 
 settings = get_settings()
 
+# ✅ FIX: Ensure uploads directory exists BEFORE mounting
+upload_dir = Path(settings.MEDIA_UPLOAD_DIR)
+upload_dir.mkdir(parents=True, exist_ok=True)
+
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
@@ -57,12 +61,16 @@ app.include_router(search_router, prefix=settings.API_V1_PREFIX)
 app.include_router(reports_router, prefix=settings.API_V1_PREFIX)
 app.include_router(ai_router, prefix=settings.API_V1_PREFIX)
 app.include_router(donations.router, prefix="/api/v1")
-app.mount("/uploads", StaticFiles(directory=settings.MEDIA_UPLOAD_DIR), name="uploads")
+
+# ✅ SAFE mount (directory now guaranteed to exist)
+app.mount("/uploads", StaticFiles(directory=upload_dir), name="uploads")
 
 
 @app.on_event("startup")
 def on_startup():
+    # (kept for redundancy, harmless and safe)
     Path(settings.MEDIA_UPLOAD_DIR).mkdir(parents=True, exist_ok=True)
+
     Base.metadata.create_all(bind=engine)
 
     db = SessionLocal()
