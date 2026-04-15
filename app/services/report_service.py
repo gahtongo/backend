@@ -5,7 +5,8 @@ from app.schemas.notification import NotificationCreate
 from app.schemas.report import ReportCreate, ReportUpdateAdmin
 
 from app.services.notification_service import create_notification
-from app.services.ai_triage_service import generate_support_reply, AIChatRequest, AIChatMessage
+from app.services.ai_triage_service import generate_support_reply, AIChatRequest
+from app.schemas.ai import AIChatMessage
 
 
 VALID_REPORT_STATUSES = {"new", "in_review", "resolved", "archived"}
