@@ -18,6 +18,7 @@ class Report(Base):
     location: Mapped[str | None] = mapped_column(String(255), nullable=True)
     incident_time: Mapped[str | None] = mapped_column(String(255), nullable=True)
     additional_notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    evidence_url: Mapped[str | None] = mapped_column(String(1024), nullable=True)
 
     is_anonymous: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     reporter_name: Mapped[str | None] = mapped_column(String(255), nullable=True)

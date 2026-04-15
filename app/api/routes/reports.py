@@ -1,7 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from pathlib import Path
+from uuid import uuid4
+
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
 from sqlalchemy.orm import Session
 
 from app.api.routes.auth import get_current_admin
+from app.core.config import settings
 from app.db.session import get_db
 from app.models.admin_user import AdminUser
 from app.models.report import Report
@@ -20,6 +24,50 @@ def submit_report(
     payload: ReportCreate,
     db: Session = Depends(get_db),
 ):
+    return create_report(db, payload)
+
+
+@router.post(
+    "/submit",
+    response_model=ReportResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def submit_report_with_evidence(
+    case_type: str = Form("Suspected Trafficking"),
+    urgency: str = Form("Urgent"),
+    description: str = Form(...),
+    location: str | None = Form(None),
+    incident_time: str | None = Form(None),
+    additional_notes: str | None = Form(None),
+    is_anonymous: bool = Form(True),
+    reporter_name: str | None = Form(None),
+    reporter_email: str | None = Form(None),
+    reporter_phone: str | None = Form(None),
+    evidence_file: UploadFile | None = File(None),
+    db: Session = Depends(get_db),
+):
+    evidence_url = None
+    if evidence_file is not None:
+        filename = f"{uuid4().hex}_{Path(evidence_file.filename).name}"
+        upload_path = Path(settings.MEDIA_UPLOAD_DIR) / filename
+        with upload_path.open("wb") as buffer:
+            buffer.write(await evidence_file.read())
+        evidence_url = f"/uploads/{filename}"
+
+    payload = ReportCreate(
+        case_type=case_type,
+        urgency=urgency,
+        description=description,
+        location=location,
+        incident_time=incident_time,
+        additional_notes=additional_notes,
+        is_anonymous=is_anonymous,
+        reporter_name=reporter_name,
+        reporter_email=reporter_email,
+        reporter_phone=reporter_phone,
+        evidence_url=evidence_url,
+    )
+
     return create_report(db, payload)
 
 

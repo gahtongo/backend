@@ -29,6 +29,7 @@ def create_report(db: Session, payload: ReportCreate) -> Report:
         location=_clean_optional(payload.location),
         incident_time=_clean_optional(payload.incident_time),
         additional_notes=_clean_optional(payload.additional_notes),
+        evidence_url=_clean_optional(payload.evidence_url),
         is_anonymous=payload.is_anonymous,
         reporter_name=reporter_name,
         reporter_email=reporter_email,

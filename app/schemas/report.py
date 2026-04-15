@@ -11,6 +11,7 @@ class ReportCreate(BaseModel):
     location: str | None = Field(default=None, max_length=255)
     incident_time: str | None = Field(default=None, max_length=255)
     additional_notes: str | None = None
+    evidence_url: str | None = Field(default=None, max_length=1024)
 
     is_anonymous: bool = True
     reporter_name: str | None = Field(default=None, max_length=255)
@@ -34,6 +35,7 @@ class ReportResponse(BaseModel):
     location: str | None = None
     incident_time: str | None = None
     additional_notes: str | None = None
+    evidence_url: str | None = None
 
     is_anonymous: bool
     reporter_name: str | None = None
