@@ -46,6 +46,12 @@ DEFAULT_PUBLIC_SETTINGS = [
         "description": "Official Twitter/X page",
         "is_public": True,
     },
+    {
+        "key": "intro_video_url",
+        "value": "/vid/intro_vid.mp4",
+        "description": "URL of the intro video",
+        "is_public": True,
+    },
 ]
 
 
